@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+import datetime
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'reversion',
 
     'home',
+    'user',
 
 ]
 
@@ -93,7 +94,7 @@ WSGI_APPLICATION = 'edu_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "edu_api",
+        'NAME': "edu_api1",
         'HOST': "localhost",
         'USER': "root",
         'PASSWORD': '123456',
@@ -200,7 +201,30 @@ LOGGING = {
 REST_FRAMEWORK = {
     # 全局异常配置
     "EXCEPTION_HANDLER": "utils.exceptions.exception_handler",
+    # 添加认证方式
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
 }
 
 # 允许跨域请求
 CORS_ORIGIN_ALLOW_ALL = True
+
+
+# jwt配置
+JWT_AUTH = {
+    # 有效时间
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
+    # 自定义jwt返回值的格式方法
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'user.utils.jwt_response_payload_handler',
+}
+
+# 注册自定义用户模型 格式必须是app.表明
+AUTH_USER_MODEL = 'user.UserInfo'
+
+# 自定义多条件登录
+AUTHENTICATION_BACKENDS = [
+    'user.utils.UserAuthBackend',
+]
