@@ -17,6 +17,8 @@ def jwt_response_payload_handler(token, user=None, request=None):
 def get_user_by_account(account):
     try:
         user = UserInfo.objects.filter(Q(username=account) | Q(phone=account)).first()
+        print(user)
+        print(account)
     except UserInfo.DoesNotExist:
         return None
     else:

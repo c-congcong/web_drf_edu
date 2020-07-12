@@ -5,7 +5,7 @@ from rest_framework.generics import ListAPIView
 
 from edu_api.settings.constants import BANNER_LENGTH, NAV_LENGTH
 from home.models import Banner, Nav
-from home.serializers import BannerModelSerializer,FooterModelSerializer
+from home.serializers import BannerModelSerializer, FooterModelSerializer
 
 
 class BannerListAPIView(ListAPIView):
@@ -26,5 +26,6 @@ class FooterListAPIView(ListAPIView):
 
 class HeaderListAPIView(ListAPIView):
     # 查询顶部的数据position=1
-    queryset = Nav.objects.filter(position=1)
+    queryset = Nav.objects.filter(is_show=True, is_delete=False).order_by("-orders")
+    # queryset = Nav.objects.filter(position=1)
     serializer_class = FooterModelSerializer

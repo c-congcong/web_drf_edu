@@ -32,7 +32,6 @@ ALLOWED_HOSTS = [
     'www.baizhishop.com',
 ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -87,7 +86,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'edu_api.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -101,7 +99,6 @@ DATABASES = {
         'PORT': 3306
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -121,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -134,7 +130,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -200,7 +195,7 @@ LOGGING = {
 # DRF 默认配置
 REST_FRAMEWORK = {
     # 全局异常配置
-    "EXCEPTION_HANDLER": "utils.exceptions.exception_handler",
+    "EXCEPTION_HANDLER": "edu_api.utils.exceptions.exception_handler",
     # 添加认证方式
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
@@ -211,7 +206,6 @@ REST_FRAMEWORK = {
 
 # 允许跨域请求
 CORS_ORIGIN_ALLOW_ALL = True
-
 
 # jwt配置
 JWT_AUTH = {
@@ -228,3 +222,28 @@ AUTH_USER_MODEL = 'user.UserInfo'
 AUTHENTICATION_BACKENDS = [
     'user.utils.UserAuthBackend',
 ]
+
+# django 连接redis设置
+
+CACHES = {
+    # 默认库
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 连接的redis所在服务端端口以及ip
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        # 使用客户端方式
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    # 验证码
+    "sms_code": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 连接的redis所在服务端端口以及ip
+        "LOCATION": "redis://127.0.0.1:6379/15",
+        # 使用客户端方式
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
