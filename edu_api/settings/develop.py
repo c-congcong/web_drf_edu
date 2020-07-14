@@ -28,8 +28,8 @@ SECRET_KEY = '1cxl(0a#9*4j-70w)i_4ds&a-mw&@#pnb)9g@l2^)!4y=^vy53'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'api.baizhishop.com',
-    'www.baizhishop.com',
+    # 'api.baizhishop.com',
+    # 'www.baizhishop.com',
 ]
 
 # Application definition
@@ -43,15 +43,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    # 'django_filter',
 
     # x admin配置
     'xadmin',
     'crispy_forms',
     'reversion',
+    # 富文本编辑器配置
+    'ckeditor',  # 富文本编辑器
+    'ckeditor_uploader',  # 富文本编辑器的上传模块
 
     'home',
     'user',
-
+    'course',
 ]
 
 MIDDLEWARE = [
@@ -247,3 +251,13 @@ CACHES = {
         }
     }
 }
+
+# devlope 配置
+KEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',  # 展示哪些工具栏
+        'height': 300,  # 编辑器的高度
+        # 'width': 300,
+    },
+}
+CKEDITOR_UPLOAD_PATH = ''

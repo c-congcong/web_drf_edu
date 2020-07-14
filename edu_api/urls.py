@@ -28,6 +28,10 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('xadmin/', xadmin.site.urls),
     re_path(r'media/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),
+    # 富文本编辑器的路由
+    path("ckeditor/", include("ckeditor_uploader.urls")),
     path("home/", include("home.urls")),
     path("user/", include("user.urls")),
+    path("course/", include("course.urls")),
+
 ]
