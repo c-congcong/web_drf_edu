@@ -134,5 +134,7 @@ dmypy.json
 media
 templates
 
+.git
+
 #日志
 logs
