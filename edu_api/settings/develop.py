@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'home',
     'user',
     'course',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -215,7 +216,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # jwt配置
 JWT_AUTH = {
     # 有效时间
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=3),
     # 自定义jwt返回值的格式方法
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'user.utils.jwt_response_payload_handler',
 }
@@ -246,6 +247,16 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         # 连接的redis所在服务端端口以及ip
         "LOCATION": "redis://127.0.0.1:6379/15",
+        # 使用客户端方式
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    # 购物车
+    "cart": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 连接的redis所在服务端端口以及ip
+        "LOCATION": "redis://127.0.0.1:6379/10",
         # 使用客户端方式
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
