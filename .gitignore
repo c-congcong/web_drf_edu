@@ -130,4 +130,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+#静态文件
 media
+templates
+
+#日志
+logs
