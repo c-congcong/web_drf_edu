@@ -18,4 +18,5 @@ SINGLE_SEND_URL = "https://sms.yunpian.com/v2/sms/single_send.json"
 # 自己的
 API_KEY = "339a2a2ab309da57aa22ebeba31ef822"
 
-IMG_SRC = "http://127.0.0.1:9001"
+# IMG_SRC = "http://127.0.0.1:9001"
+IMG_SRC = "http://api.baizhishop.com:9001/"

@@ -28,8 +28,8 @@ SECRET_KEY = '1cxl(0a#9*4j-70w)i_4ds&a-mw&@#pnb)9g@l2^)!4y=^vy53'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    # 'api.baizhishop.com',
-    # 'www.baizhishop.com',
+    'api.baizhishop.com',
+    'www.baizhishop.com',
 ]
 
 # Application definition
@@ -135,7 +135,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

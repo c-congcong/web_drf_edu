@@ -17,7 +17,7 @@ class BannerModelSerializer(serializers.ModelSerializer):
 class FooterModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nav
-        fields = ("title", "link", "position")
+        fields = ("title", "link", "position","is_site")
 
 
 class HeaderModelSerializer(serializers.ModelSerializer):

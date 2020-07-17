@@ -6,7 +6,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from course.models import Course
+from course.models import Course, CourseExpire
 from edu_api.settings import constants
 
 log = logging.getLogger("django")
@@ -16,7 +16,7 @@ class CartViewSet(ViewSet):
     """购物车"""
 
     # 只有登录认证成功的才能访问接口
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def add_cart(self, request):
         course_id = request.data.get("course_id")
@@ -59,6 +59,7 @@ class CartViewSet(ViewSet):
         redis_connection = get_redis_connection("cart")
         cart_list_bytes = redis_connection.hgetall("cart_%s" % user_id)
         select_list_bytes = redis_connection.smembers("selected_%s" % user_id)
+
         # 循环从MySQL中找出商品信息
         data = []
         for course_id_bytes, expire_id_bytes in cart_list_bytes.items():
@@ -76,7 +77,11 @@ class CartViewSet(ViewSet):
                 "name": course.name,
                 "id": course.id,
                 "expire_id": expire_id,
-                "price": course.price,
+                # "price": course.price,
+                # 购物车列表需要课程有效期
+                "expire_list": course.expire_list,
+                # TODO 获取真实价格
+                "real_price": course.real_expire_price(expire_id),
             })
         return Response(data)
 
@@ -85,7 +90,7 @@ class CartViewSet(ViewSet):
         user_id = request.user.id
         selected = request.data.get("selected")
         course_id = request.data.get("course_id")
-        print(course_id,user_id)
+        print(course_id, user_id, selected)
 
         try:
             Course.objects.get(is_show=True, is_delete=False, pk=course_id)
@@ -100,13 +105,58 @@ class CartViewSet(ViewSet):
 
         return Response({"message": "切换成功！"})
 
-    def del_course(self, request):
+    def change_select_all(self, request):
+        """切换购物车商品状态"""
+        user_id = request.user.id
+        selected = request.data.get("selected")
+        course_id = request.data.get("course_id")
+        print(course_id, user_id, selected)
+
+        try:
+            Course.objects.get(is_show=True, is_delete=False, pk=course_id)
+        except Course.DoesNotExist:
+            return Response({"message": "参数有误，当前商品不存在"}, status=status.HTTP_400_BAD_REQUEST)
+
+        redis_connection = get_redis_connection("cart")
+        if selected:
+            redis_connection.srem("selected_%s" % user_id, course_id)
+        else:
+            redis_connection.sadd("selected_%s" % user_id, course_id)
+
+        return Response({"message": "切换成功！"})
+
+    def del_course(self, request, *args, **kwargs):
         """删除商品"""
         user_id = request.user.id
-        # user_id = 1
-        course_id = request.data.get("course_id")
+        course_id = kwargs.get("course")
+        print(course_id)
         redis_connection = get_redis_connection("cart")
-        redis_connection.hdel("cart_%s" % user_id,course_id)
-        print(course_id,user_id,redis_connection)
+        redis_connection.hdel("cart_%s" % user_id, course_id)
+        print(course_id, user_id, redis_connection)
 
         return Response({"message": "删除成功！"})
+
+    def change_expire(self, request):
+        """改变redis中课程的有效期"""
+        user_id = request.user.id
+        expire_id = request.data.get("expire_id")
+        course_id = request.data.get("course_id")
+        print(course_id, expire_id)
+
+        try:
+            course = Course.objects.get(is_show=True, is_delete=False, id=course_id)
+            # 如果前端传递来的有效期选项  如果不是0  则修改课程对应的有效期
+            if expire_id > 0:
+                expire_iem = CourseExpire.objects.filter(is_show=True, is_delete=False, id=expire_id)
+                if not expire_iem:
+                    raise Course.DoesNotExist()
+        except Course.DoesNotExist:
+            return Response({"message": "课程信息不存在"}, status=status.HTTP_400_BAD_REQUEST)
+
+        connection = get_redis_connection("cart")
+        connection.hset("cart_%s" % user_id, course_id, expire_id)
+
+        # 重新计算切换有效期后的价钱
+        real_price = course.real_expire_price(expire_id)
+
+        return Response({"message": "切换有效期成功", "real_price": real_price})
