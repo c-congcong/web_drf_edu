@@ -10,4 +10,6 @@ urlpatterns = [
                                                })),
     path("option/<str:course>", views.CartViewSet.as_view({"delete": "del_course"})),
     path("option/change_all/", views.CartViewSet.as_view({"patch": "change_select_all"})),
+    path("order/", views.CartViewSet.as_view({"get": "get_select_course"})),
+
 ]
