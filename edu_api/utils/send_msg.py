@@ -20,7 +20,7 @@ class Message(object):
         params = {
             "apikey": self.api_key,
             'mobile': phone,
-            'text': "【李柯锰】您的验证码是{code}".format(code=code)
+            'text': "【毛信宇test】您的验证码是{code}".format(code=code)
         }
         # 可以发送http请求
         req = requests.post(self.single_send_url, data=params)

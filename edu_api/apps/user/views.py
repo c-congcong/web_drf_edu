@@ -55,9 +55,36 @@ class CaptchaAPIView(APIView):
         return Response(result)
 
 
-class SmsLoginAPIView():
+class SmsLoginAPIView(APIView):
     """短信登录"""
-    pass
+
+    def post(self, request, *args, **kwargs):
+        phone = request.data.get("mobile")
+        sms_code = request.data.get("sms_code")
+        if not re.match(r'^1[3-9]\d{9}$', phone):
+            return Response({"message": "手机号格式不正确"}, status=http_status.HTTP_400_BAD_REQUEST)
+        # 验证手机号是否被注册
+        try:
+            user = get_user_by_account(phone)
+        except:
+            user = None
+            return Response({"message": "手机号未注册"}, status=http_status.HTTP_400_BAD_REQUEST)
+        if user:
+            # 如果user存在，则可以短信登录
+            # 获取redis连接
+            redis_connection = get_redis_connection("sms_code")
+            phone_code = redis_connection.get("mobile_%s" % phone)
+            if phone_code.decode() != sms_code:
+                # 为了防止暴力破解 可以再次设置一个手机号只能验证 n次  累加
+                num = 0
+                num += 1
+                if num > 10:
+                    # 重新发送验证码
+                    return Response({"message": "错误次数太多请重新发送"}, status=http_status.HTTP_400_BAD_REQUEST)
+                return Response({"message": "验证码不一致"}, status=http_status.HTTP_400_BAD_REQUEST)
+        # 验证码一致登录
+        return Response({"message": "登录成功！"})
+        # return Response({"message": "ok"})
 
 
 class UserAPIView(CreateAPIView):

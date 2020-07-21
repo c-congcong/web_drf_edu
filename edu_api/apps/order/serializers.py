@@ -118,3 +118,16 @@ class OrderModelSerializer(serializers.ModelSerializer):
                 order.save()
 
             return order
+
+
+class OrderDetailModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderDetail
+        fields = ("course", "discount_name")
+
+
+class GitOrderModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ("id", "order_number", "pay_type", "order_title", "total_price", "real_price", "order_status",
+                  "order_desc", "pay_time",)

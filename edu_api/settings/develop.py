@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'course',
     'cart',
     'order',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -274,3 +275,18 @@ KEDITOR_CONFIGS = {
     },
 }
 CKEDITOR_UPLOAD_PATH = ''
+
+# 支付宝配置信息
+ALIAPY_CONFIG = {
+    # "gateway_url": "https://openapi.alipay.com/gateway.do?", # 真实支付宝网关地址
+    "gateway_url": "https://openapi.alipaydev.com/gateway.do?",  # 沙箱支付宝网关地址
+    "appid": "2016102600767444",
+    "app_notify_url": None,
+    "app_private_key_path": open(os.path.join(BASE_DIR, "apps/payments/keys/app_private_key.pem")).read(),
+    "alipay_public_key_path": open(os.path.join(BASE_DIR, "apps/payments/keys/app_private_key.pem")).read(),
+    "sign_type": "RSA2",
+    "debug": False,
+    # "return_url": "http://www.baizhistore.cn:8080/payments/result",  # 同步回调地址
+    "return_url": "http://localhost:8080/pay",  # 同步回调地址
+    "notify_url": "http://api.baizhishop.com:9001/payments/pay/",  # 异步结果通知
+}

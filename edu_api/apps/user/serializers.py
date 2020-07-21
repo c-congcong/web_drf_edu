@@ -35,12 +35,17 @@ class UserModelSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         """验证手机号"""
         phone = attrs.get("phone")
+        # mobile = attrs.get("mobile")
         password = attrs.get("password")
         sms_code = attrs.get("sms_code")  # 用户提交的验证码
 
         # 验证手机号格式
         if not re.match(r'^1[3-9]\d{9}$', phone):
             raise serializers.ValidationError("手机号格式错误")
+
+        # # 验证手机号格式
+        # if not re.match(r'^1[3-9]\d{9}$', mobile):
+        #     raise serializers.ValidationError("手机号格式错误")
 
         # 验证手机号是否被注册
         try:
@@ -53,7 +58,6 @@ class UserModelSerializer(serializers.ModelSerializer):
         # TODO 验证手机号短信验证码是否正确
         redis_connection = get_redis_connection("sms_code")
         phone_code = redis_connection.get("mobile_%s" % phone)
-        print(phone_code.decode(), sms_code, attrs)
         if phone_code.decode() != sms_code:
             # 为了防止暴力破解 可以再次设置一个手机号只能验证 n次  累加
             num = 0

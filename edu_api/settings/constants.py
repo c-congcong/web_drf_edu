@@ -14,9 +14,9 @@ MOBILE_EXPIRE_TIME = 10 * 60
 SINGLE_SEND_URL = "https://sms.yunpian.com/v2/sms/single_send.json"
 
 # 发送短信的api_key
-# API_KEY = "40d6180426417bfc57d0744a362dc108"
-# 自己的
-API_KEY = "339a2a2ab309da57aa22ebeba31ef822"
+API_KEY = "40d6180426417bfc57d0744a362dc108"
+# 自己的“用完了QAQ”
+# API_KEY = "339a2a2ab309da57aa22ebeba31ef822"
 
 # IMG_SRC = "http://127.0.0.1:9001"
 IMG_SRC = "http://api.baizhishop.com:9001/"

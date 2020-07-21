@@ -8,7 +8,7 @@ from course.pagination import CoursePageNumber
 from course.serializer import CourseCategorySerializer, CourseModelSerializer, CourseChapterModelSerializer
 
 
-class CourseCategoryListAPIView(ListAPIView):
+class   CourseCategoryListAPIView(ListAPIView):
     """课程分类信息查询"""
     queryset = CourseCategory.objects.filter(is_show=True, is_delete=False).order_by("orders")
     serializer_class = CourseCategorySerializer
