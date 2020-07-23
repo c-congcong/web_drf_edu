@@ -14,9 +14,18 @@ from user.models import UserInfo
 from user.serializers import UserModelSerializer
 from user.utils import get_user_by_account
 from edu_api.utils.random_code import get_random_code
+from rest_framework_jwt.settings import api_settings
+
+jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 pc_geetest_id = "6f91b3d2afe94ed29da03c14988fb4ef"
 pc_geetest_key = "7a01b1933685931ef5eaf5dabefd3df2"
+
+
+def get_token(user):
+    token = jwt_payload_handler(user)
+    return jwt_encode_handler(token)
 
 
 class CaptchaAPIView(APIView):
@@ -82,15 +91,29 @@ class SmsLoginAPIView(APIView):
                     # 重新发送验证码
                     return Response({"message": "错误次数太多请重新发送"}, status=http_status.HTTP_400_BAD_REQUEST)
                 return Response({"message": "验证码不一致"}, status=http_status.HTTP_400_BAD_REQUEST)
+        user.token = get_token(user)
         # 验证码一致登录
-        return Response({"message": "登录成功！"})
-        # return Response({"message": "ok"})
+        return Response(UserModelSerializer(user).data)
 
 
 class UserAPIView(CreateAPIView):
     """用户注册"""
     queryset = UserInfo.objects.all()
     serializer_class = UserModelSerializer
+
+
+class MobileAPIView(APIView):
+
+    def get(self, request, mobile):
+        # 判断手机号是否合法
+        if not re.match(r"^1[3-9]\d{9}", mobile):
+            return Response({"message": "手机号格式不正确"}, status=http_status.HTTP_400_BAD_REQUEST)
+        user = get_user_by_account(mobile)
+
+        if user is None:
+            return Response({"message": "手机号还未被注册"}, status=http_status.HTTP_400_BAD_REQUEST)
+
+        return Response({"message": "ok"})
 
 
 class MobileCheckAPIView(APIView):
@@ -135,8 +158,13 @@ class SendMessageAPIView(APIView):
 
         # 4. 调用方法  完成短信的发送
         try:
-            message = Message(constants.API_KEY)
-            message.send_message(mobile, code)
+            # 通过celery异步执行发送短信的服务
+            from my_task.sms.tasks import send_sms
+            # 调用任务函数  发布任务
+            send_sms.delay(mobile, code)  # 如果需要参数则传递过去 不需要则不传递
+            # TODO 分配优惠券  发送邮件  会员等级 发送一个注册某网站成功的短信 只需将异步执行的任务发送给celery
+            # message = Message(constants.API_KEY)
+            # message.send_message(mobile, code)
         except:
             return Response({"message": "短信发送失败"}, status=http_status.HTTP_500_INTERNAL_SERVER_ERROR)
 

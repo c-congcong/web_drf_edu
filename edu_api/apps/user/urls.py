@@ -8,5 +8,6 @@ urlpatterns = [
     path("register/", views.UserAPIView.as_view()),
     path("sms_login/", views.SmsLoginAPIView.as_view()),
     path("mobile/<str:mobile>", views.MobileCheckAPIView.as_view()),
+    path("mobile1/<str:mobile>", views.MobileAPIView.as_view()),
     path("sms/<str:mobile>", views.SendMessageAPIView.as_view()),
 ]

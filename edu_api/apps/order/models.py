@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 
 from course.BaseModel import BaseModel
@@ -28,6 +30,8 @@ class Order(BaseModel):
     order_desc = models.TextField(max_length=500, verbose_name="订单描述")
     pay_time = models.DateTimeField(null=True, verbose_name="支付时间")
     user = models.ForeignKey(UserInfo, related_name='user_orders', on_delete=models.DO_NOTHING, verbose_name="下单用户")
+    course = models.ForeignKey(Course, null=True, blank=True, on_delete=models.CASCADE,
+                               verbose_name="课程ID")
 
     class Meta:
         db_table = "bz_order"
@@ -36,6 +40,11 @@ class Order(BaseModel):
 
     def __str__(self):
         return "%s,总价: %s,实付: %s" % (self.order_title, self.total_price, self.real_price)
+
+    # def time(self):
+    #     time = datetime.now()
+    #     time += 30 * 60
+    #     return time
 
 
 class OrderDetail(BaseModel):

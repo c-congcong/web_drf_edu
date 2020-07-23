@@ -120,14 +120,31 @@ class OrderModelSerializer(serializers.ModelSerializer):
             return order
 
 
-class OrderDetailModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderDetail
-        fields = ("course", "discount_name")
-
-
 class GitOrderModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ("id", "order_number", "pay_type", "order_title", "total_price", "real_price", "order_status",
                   "order_desc", "pay_time",)
+
+
+class CourseModelSerializer(serializers.ModelSerializer):
+    """课程列表"""
+
+    class Meta:
+        model = Course
+        fields = ["id", "name", "course_img"]
+
+
+class OrderDetailModelSerializer(serializers.ModelSerializer):
+    course = CourseModelSerializer()
+    order = GitOrderModelSerializer()
+
+    class Meta:
+        model = OrderDetail
+        fields = ("course", "order", "discount_name", "expire", "create_time")
+
+
+# class OrderListModelSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Order
+#         fields = ("time",)

@@ -266,7 +266,7 @@ CACHES = {
     }
 }
 
-# devlope 配置
+# develope 配置
 KEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'full',  # 展示哪些工具栏

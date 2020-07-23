@@ -11,14 +11,6 @@ class CourseCategorySerializer(ModelSerializer):
         fields = ["id", "name"]
 
 
-class CourseTeacherSerializer(ModelSerializer):
-    """课程所属老师的序列化器"""
-
-    class Meta:
-        model = Teacher
-        fields = ("id", "name", "title", "signature", "role", "image")
-
-
 class CourseLessonModelSerializer(ModelSerializer):
     class Meta:
         model = CourseLesson
@@ -33,6 +25,14 @@ class CourseChapterModelSerializer(ModelSerializer):
     class Meta:
         model = CourseChapter
         fields = ["id", "name", "chapter", "coursesections"]
+
+
+class CourseTeacherSerializer(ModelSerializer):
+    """课程所属老师的序列化器"""
+
+    class Meta:
+        model = Teacher
+        fields = ("id", "name", "title", "signature", "role", "image")
 
 
 class CourseModelSerializer(ModelSerializer):

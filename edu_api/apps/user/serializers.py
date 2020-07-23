@@ -98,3 +98,6 @@ class UserModelSerializer(serializers.ModelSerializer):
         user.token = jwt_encode_handler(payload)
         print(user)
         return user
+
+
+
